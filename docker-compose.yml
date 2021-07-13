@@ -1,0 +1,39 @@
+version: '3.9'
+
+services: 
+    db:
+        image: mysql:5.7 
+        volumes:
+            - ./mysql/data:/var/lib/mysql
+            - ./mysql/initdb.d:/docker-entrypoint-initdb.d
+        restart: always        
+        environment: 
+            MYSQL_ROOT_PASSWORD: password123321
+            MYSQL_DATABASE: wp
+            MYSQL_USER: wpuser
+            MYSQL_PASSWORD: password123321
+        networks:
+            - wpnetwork
+    
+    wordpress:
+        image: wordpress:latest
+        ports: 
+            - "8003:80"
+        depends_on: 
+            - db 
+        volumes: 
+            - ./html:/var/www/html
+        environment: 
+            WORDPRESS_DB_HOST: db:3306
+            WORDPRESS_DB_NAME: wp
+            WORDPRESS_DB_USER: wpuser 
+            WORDPRESS_DB_PASSWORD: password123321
+        networks:
+            - wpnetwork
+    
+networks:
+    wpnetwork:
+
+volumes:
+    db_data:
+
